@@ -1,0 +1,13 @@
+Todo list
+-drawing board
+-drawing player
+-make map
+-make it move
+-break blocks
+-make an inventory
+-create player data files
+
+DrawMapFromCoords
+
+	Filestream (file)
+		while(lineCounter !=
