@@ -73,7 +73,7 @@ namespace _2DGame
             Console.SetCursorPosition(posX, posY);
         }
 
-        private static void PlayerInteraction(string[] mapBlockList, int xPos, int yPos, out int newPosX, out int newPosY)
+        private static void PlayerInteraction(string[] mapBlockList, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation)
         {
             newPosX = xPos;
             newPosY = yPos;
@@ -83,15 +83,16 @@ namespace _2DGame
             {
                 keyPress = new ConsoleKeyInfo();
                 keyPress = Console.ReadKey(true);
-                PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY);
+                PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY, out orientation);
             } while (keyPress.Key != ConsoleKey.Escape);
         }
 
 
-        private static void PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY)
+        private static void PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation)
         {
             newPosX = xPos;
             newPosY = yPos;
+            orientation = 'N';
 
             char[] charList = mapBlockList[yPos].ToCharArray();
             char block;
@@ -105,6 +106,7 @@ namespace _2DGame
                     yPos--;
                     newPosX = xPos;
                     newPosY = yPos;
+                    orientation = 'N';
                     break;
                 case ConsoleKey.S:
                     block = charList[(xPos / 2)];
@@ -114,6 +116,7 @@ namespace _2DGame
                     yPos++;
                     newPosX = xPos;
                     newPosY = yPos;
+                    orientation = 'S';
                     break;
                 case ConsoleKey.A:
                     block = charList[(xPos / 2)];
@@ -123,6 +126,7 @@ namespace _2DGame
                     xPos -= 2;
                     newPosX = xPos;
                     newPosY = yPos;
+                    orientation = 'W';
                     break;
                 case ConsoleKey.D:
                     block = charList[(xPos / 2)];
@@ -134,6 +138,7 @@ namespace _2DGame
                 default:
                     newPosX = xPos;
                     newPosY = yPos;
+                    orientation = 'E';
                     break;
             }
         }
