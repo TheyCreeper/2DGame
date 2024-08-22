@@ -102,7 +102,7 @@ namespace _2DGame
             switch (keyPress.Key) {
                 case ConsoleKey.W:
                     orientation = 'N';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos - 1, out isAble);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble);
 
                     if (isAble)
                     {
@@ -194,11 +194,11 @@ namespace _2DGame
                     if (block != '-') isAble = false;
                     break;
                 case 'W':
-                    block = charListCurrent[(xPos / 2) - 1];
+                    block = charListCurrent[(xPos / 2)];
                     if (block != '-') isAble = false;
                     break;
                 case 'E':
-                    block = charListCurrent[(xPos / 2) + 1];
+                    block = charListCurrent[(xPos / 2)];
                     if (block != '-') isAble = false;
                     break;
             }
