@@ -15,7 +15,7 @@ namespace _2DGame
             LoadMapInRam(out mapBlockList, "..\\..\\..\\..\\data\\map.txt");
             DrawMap(mapBlockList);
             LoadPlayer(DEF_POS_X, DEF_POS_Y);
-            MovePlayer(mapBlockList, posX, posY, out newPosX, out newPosY);
+            PlayerInteraction(mapBlockList, posX, posY, out newPosX, out newPosY);
         }
         
         private static void DrawMap(string[] mapBlockList)
