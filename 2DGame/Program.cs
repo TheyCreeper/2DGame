@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.Metrics;
+using System.Text;
 
 namespace _2DGame
 {
@@ -6,10 +7,15 @@ namespace _2DGame
     {
         static void Main(string[] args)
         {
+            const int DEF_POS_X = 46, DEF_POS_Y = 8;
+            int posX = DEF_POS_X, posY = DEF_POS_Y;
+            int newPosX, newPosY;
             string[] mapBlockList = new string[16];
-            LoadMapInRam(out mapBlockList, "C:\\Users\\TheyCreeper\\Documents\\Dev\\C#\\2DGame\\2DGame\\data\\map.txt");
-            DrawMap(mapBlockList);
 
+            LoadMapInRam(out mapBlockList, "..\\..\\..\\..\\data\\map.txt");
+            DrawMap(mapBlockList);
+            LoadPlayer(DEF_POS_X, DEF_POS_Y);
+            MovePlayer(mapBlockList, posX, posY, out newPosX, out newPosY);
         }
         
         private static void DrawMap(string[] mapBlockList)
@@ -54,10 +60,83 @@ namespace _2DGame
             if (c == '-') Console.BackgroundColor = ConsoleColor.Green;
             if (c == 'T') Console.BackgroundColor = ConsoleColor.DarkGreen;
             if (c == 'I') Console.BackgroundColor = ConsoleColor.DarkGray;
+            if (c == 'Z') Console.BackgroundColor = ConsoleColor.White;
 
             Console.Write("  ");
             Console.ResetColor();
         }
 
+        private static void LoadPlayer(int posX, int posY)
+        {
+            Console.SetCursorPosition(posX, posY);
+            DrawBlockWithColor('Z');
+            Console.SetCursorPosition(posX, posY);
+        }
+
+        private static void PlayerInteraction(string[] mapBlockList, int xPos, int yPos, out int newPosX, out int newPosY)
+        {
+            newPosX = xPos;
+            newPosY = yPos;
+
+            ConsoleKeyInfo keyPress;
+            do
+            {
+                keyPress = new ConsoleKeyInfo();
+                keyPress = Console.ReadKey(true);
+                PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY);
+            } while (keyPress.Key != ConsoleKey.Escape);
+        }
+
+
+        private static void PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY)
+        {
+            newPosX = xPos;
+            newPosY = yPos;
+
+            char[] charList = mapBlockList[yPos].ToCharArray();
+            char block;
+
+            switch (keyPress.Key) {
+                case ConsoleKey.W:
+                    block = charList[(xPos / 2)];
+                    DrawBlockWithColor(block);
+
+                    LoadPlayer(xPos, yPos - 1);
+                    yPos--;
+                    newPosX = xPos;
+                    newPosY = yPos;
+                    break;
+                case ConsoleKey.S:
+                    block = charList[(xPos / 2)];
+                    DrawBlockWithColor(block);
+
+                    LoadPlayer(xPos, yPos + 1);
+                    yPos++;
+                    newPosX = xPos;
+                    newPosY = yPos;
+                    break;
+                case ConsoleKey.A:
+                    block = charList[(xPos / 2)];
+                    DrawBlockWithColor(block);
+
+                    LoadPlayer(xPos - 2, yPos);
+                    xPos -= 2;
+                    newPosX = xPos;
+                    newPosY = yPos;
+                    break;
+                case ConsoleKey.D:
+                    block = charList[(xPos / 2)];
+                    DrawBlockWithColor(block);
+
+                    LoadPlayer(xPos + 2, yPos);
+                    xPos += 2;
+                    break;
+                default:
+                    newPosX = xPos;
+                    newPosY = yPos;
+                    break;
+            }
+        }
     }
 }
+
