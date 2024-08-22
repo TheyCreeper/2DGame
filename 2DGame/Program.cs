@@ -10,12 +10,13 @@ namespace _2DGame
             const int DEF_POS_X = 46, DEF_POS_Y = 8;
             int posX = DEF_POS_X, posY = DEF_POS_Y;
             int newPosX, newPosY;
+            char orientation;
             string[] mapBlockList = new string[16];
 
             LoadMapInRam(out mapBlockList, "..\\..\\..\\..\\data\\map.txt");
             DrawMap(mapBlockList);
             LoadPlayer(DEF_POS_X, DEF_POS_Y);
-            PlayerInteraction(mapBlockList, posX, posY, out newPosX, out newPosY);
+            PlayerInteraction(mapBlockList, posX, posY, out newPosX, out newPosY, out orientation);
         }
         
         private static void DrawMap(string[] mapBlockList)
@@ -77,10 +78,11 @@ namespace _2DGame
         {
             newPosX = xPos;
             newPosY = yPos;
-
             ConsoleKeyInfo keyPress;
             do
             {
+                xPos = newPosX;
+                yPos = newPosY;
                 keyPress = new ConsoleKeyInfo();
                 keyPress = Console.ReadKey(true);
                 PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY, out orientation);
@@ -96,49 +98,108 @@ namespace _2DGame
 
             char[] charList = mapBlockList[yPos].ToCharArray();
             char block;
-
+            bool isAble;
             switch (keyPress.Key) {
                 case ConsoleKey.W:
-                    block = charList[(xPos / 2)];
-                    DrawBlockWithColor(block);
-
-                    LoadPlayer(xPos, yPos - 1);
-                    yPos--;
-                    newPosX = xPos;
-                    newPosY = yPos;
                     orientation = 'N';
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos - 1, out isAble);
+
+                    if (isAble)
+                    {
+                        block = charList[(xPos / 2)];
+                        DrawBlockWithColor(block);
+
+                        LoadPlayer(xPos, yPos - 1);
+                        yPos--;
+                        newPosX = xPos;
+                        newPosY = yPos;
+                    }
+                    isAble = true;
                     break;
                 case ConsoleKey.S:
-                    block = charList[(xPos / 2)];
-                    DrawBlockWithColor(block);
-
-                    LoadPlayer(xPos, yPos + 1);
-                    yPos++;
-                    newPosX = xPos;
-                    newPosY = yPos;
                     orientation = 'S';
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble);
+
+                    if (isAble)
+                    {
+                        block = charList[(xPos / 2)];
+                        DrawBlockWithColor(block);
+
+                        LoadPlayer(xPos, yPos + 1);
+                        yPos++;
+                        newPosX = xPos;
+                        newPosY = yPos;
+                    }
+                    isAble = true;
                     break;
                 case ConsoleKey.A:
-                    block = charList[(xPos / 2)];
-                    DrawBlockWithColor(block);
-
-                    LoadPlayer(xPos - 2, yPos);
-                    xPos -= 2;
-                    newPosX = xPos;
-                    newPosY = yPos;
                     orientation = 'W';
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos - 2, yPos, out isAble);
+
+                    if (isAble)
+                    {
+                        block = charList[(xPos / 2)];
+                        DrawBlockWithColor(block);
+
+                        LoadPlayer(xPos - 2, yPos);
+                        xPos -= 2;
+                        newPosX = xPos;
+                        newPosY = yPos;
+                    }
+                    isAble = true;
                     break;
                 case ConsoleKey.D:
-                    block = charList[(xPos / 2)];
-                    DrawBlockWithColor(block);
+                    orientation = 'E';
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos + 2, yPos, out isAble);
 
-                    LoadPlayer(xPos + 2, yPos);
-                    xPos += 2;
+                    if (isAble)
+                    {
+                        block = charList[(xPos / 2)];
+                        DrawBlockWithColor(block);
+
+                        LoadPlayer(xPos + 2, yPos);
+                        xPos += 2;
+                        newPosX = xPos;
+                        newPosY = yPos;
+                    }
+                    isAble = true;
                     break;
                 default:
                     newPosX = xPos;
                     newPosY = yPos;
-                    orientation = 'E';
+                    break;
+            }
+        }
+
+        private static void CheckIfAbleToMove(int orientation, string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out bool isAble)
+        {
+            char[] charListBelow = mapBlockList[yPos].ToCharArray();
+            char[] charListAbove = mapBlockList[yPos].ToCharArray();
+
+            char[] charListCurrent = mapBlockList[yPos].ToCharArray();
+            if (yPos != 0) { charListAbove = mapBlockList[yPos - 1].ToCharArray(); }
+            if (yPos != 15) { charListBelow = mapBlockList[yPos + 1].ToCharArray(); }
+            
+            char block;
+            isAble = true;
+
+            switch (orientation)
+            {
+                case 'N':
+                    block = charListAbove[(xPos / 2)];
+                    if (block != '-') isAble = false;
+                    break;
+                case 'S':
+                    block = charListBelow[(xPos / 2)];
+                    if (block != '-') isAble = false;
+                    break;
+                case 'W':
+                    block = charListCurrent[(xPos / 2) - 1];
+                    if (block != '-') isAble = false;
+                    break;
+                case 'E':
+                    block = charListCurrent[(xPos / 2) + 1];
+                    if (block != '-') isAble = false;
                     break;
             }
         }
