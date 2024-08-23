@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Metrics;
 using System.Text;
+using System.Xml;
 
 namespace _2DGame
 {
@@ -171,7 +172,7 @@ namespace _2DGame
             }
         }
 
-        private static void CheckIfAbleToMove(int orientation, string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out bool isAble)
+        private static void CheckIfAbleToMove(int orientation, string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out bool isAbleMove, out bool isAbleBreak)
         {
             char[] charListBelow = mapBlockList[yPos].ToCharArray();
             char[] charListAbove = mapBlockList[yPos].ToCharArray();
@@ -181,25 +182,42 @@ namespace _2DGame
             if (yPos != 15) { charListBelow = mapBlockList[yPos + 1].ToCharArray(); }
             
             char block;
-            isAble = true;
+            isAbleMove = true;
+            isAbleBreak = false;
 
             switch (orientation)
             {
                 case 'N':
                     block = charListAbove[(xPos / 2)];
-                    if (block != '-') isAble = false;
+                    if (block != '-') 
+                    {
+                        isAbleMove = false;
+                        isAbleBreak = true;
+                    }
                     break;
                 case 'S':
                     block = charListBelow[(xPos / 2)];
-                    if (block != '-') isAble = false;
+                    if (block != '-')
+                    {
+                        isAbleMove = false;
+                        isAbleBreak = true;
+                    }
                     break;
                 case 'W':
                     block = charListCurrent[(xPos / 2)];
-                    if (block != '-') isAble = false;
+                    if (block != '-')
+                    {
+                        isAbleMove = false;
+                        isAbleBreak = true;
+                    }
                     break;
                 case 'E':
                     block = charListCurrent[(xPos / 2)];
-                    if (block != '-') isAble = false;
+                    if (block != '-')
+                    {
+                        isAbleMove = false;
+                        isAbleBreak = true;
+                    }
                     break;
             }
         }
