@@ -20,12 +20,12 @@ namespace _2DGame
             LoadPlayer(DEF_POS_X, DEF_POS_Y);
             PlayerInteraction(mapBlockList, posX, posY, out newPosX, out newPosY, out orientation);
         }
-        
+
         private static void DrawMap(string[] mapBlockList)
         {
             int yCounter = 0;
             int cCounter = 0;
-            while(yCounter < mapBlockList.Length)
+            while (yCounter < mapBlockList.Length)
             {
                 char[] charList = mapBlockList[yCounter].ToCharArray();
                 while (cCounter < mapBlockList[yCounter].ToCharArray().Length)
@@ -41,7 +41,7 @@ namespace _2DGame
 
         private static void LoadMapInRam(out string[] mapBlockList, string pathToFile)
         {
-            
+
             mapBlockList = new string[16];
             int lineCount = 0;
 
@@ -81,6 +81,7 @@ namespace _2DGame
             newPosX = xPos;
             newPosY = yPos;
             orientation = 'N';
+            char block = '-';
 
             ConsoleKeyInfo keyPress;
             do
@@ -91,30 +92,33 @@ namespace _2DGame
                 keyPress = Console.ReadKey(true);
 
                 //Check if the input is WASD, else dont move the player because its likely going to be doing something else like breaking a block or wathever
-                if (keyPress.Key == ConsoleKey.W ||  keyPress.Key == ConsoleKey.S || keyPress.Key == ConsoleKey.A || keyPress.Key == ConsoleKey.D)
-                { PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY, out orientation, out isAbleBreak); }
+                if (keyPress.Key == ConsoleKey.W || keyPress.Key == ConsoleKey.S || keyPress.Key == ConsoleKey.A || keyPress.Key == ConsoleKey.D)
+                { block = PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY, out orientation); }
+                else if (keyPress.Key == ConsoleKey.B)
+                {
 
+                }
 
             } while (keyPress.Key != ConsoleKey.Escape);
         }
 
         //This function is a bit too complicated for my liking, each case statement is very similar so there might be a way to make it less complicated
-        private static void PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation, out bool isAbleBreak)
+        private static char PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation)
         {
             newPosX = xPos;
             newPosY = yPos;
             orientation = 'N';
-            isAbleBreak = false;
 
             bool isAble;
 
             char[] charList = mapBlockList[yPos].ToCharArray();
             char block;
 
-            switch (keyPress.Key) {
+            switch (keyPress.Key)
+            {
                 case ConsoleKey.W:
                     orientation = 'N';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble, out isAbleBreak);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble, out block);
 
                     if (isAble)
                     {
@@ -130,7 +134,7 @@ namespace _2DGame
                     break;
                 case ConsoleKey.S:
                     orientation = 'S';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble, out isAbleBreak);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble, out block);
 
                     if (isAble)
                     {
@@ -146,7 +150,7 @@ namespace _2DGame
                     break;
                 case ConsoleKey.A:
                     orientation = 'W';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos - 2, yPos, out isAble, out isAbleBreak);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos - 2, yPos, out isAble, out block);
 
                     if (isAble)
                     {
@@ -162,7 +166,7 @@ namespace _2DGame
                     break;
                 case ConsoleKey.D:
                     orientation = 'E';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos + 2, yPos, out isAble, out isAbleBreak);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos + 2, yPos, out isAble, out block);
 
                     if (isAble)
                     {
@@ -179,20 +183,25 @@ namespace _2DGame
                 default:
                     newPosX = xPos;
                     newPosY = yPos;
+                    block = 'Z';
                     break;
             }
+            return block;
         }
 
-        private static void CheckIfAbleToMove(int orientation, string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out bool isAbleMove, out bool isAbleBreak)
+
+        //This function is a bit too complicated for my liking, each case statement is very similar so there might be a way to make it less complicated
+        private static void CheckIfAbleToMove(char orientation, string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out bool isAbleMove, out bool isAbleBreak, out char block)
         {
-            char[] charListBelow = mapBlockList[yPos].ToCharArray();
-            char[] charListAbove = mapBlockList[yPos].ToCharArray();
+            char[] charListBelow = new char[2];
+            char[] charListAbove = new char[2];
 
             char[] charListCurrent = mapBlockList[yPos].ToCharArray();
             if (yPos != 0) { charListAbove = mapBlockList[yPos - 1].ToCharArray(); }
             if (yPos != 15) { charListBelow = mapBlockList[yPos + 1].ToCharArray(); }
-            
-            char block;
+
+            //Set the variables as the default ones
+            block = '-';
             isAbleMove = true;
             isAbleBreak = false;
 
@@ -200,7 +209,7 @@ namespace _2DGame
             {
                 case 'N':
                     block = charListAbove[(xPos / 2)];
-                    if (block != '-') 
+                    if (block != '-')
                     {
                         isAbleMove = false;
                         isAbleBreak = true;
@@ -231,6 +240,11 @@ namespace _2DGame
                     }
                     break;
             }
+        }
+
+        private static void BreakBlock(char orientation, char block, int xPos, int yPos)
+        {
+
         }
     }
 }
