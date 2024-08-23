@@ -77,8 +77,11 @@ namespace _2DGame
 
         private static void PlayerInteraction(string[] mapBlockList, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation)
         {
+            bool isAbleBreak = false;
             newPosX = xPos;
             newPosY = yPos;
+            orientation = 'N';
+
             ConsoleKeyInfo keyPress;
             do
             {
@@ -86,24 +89,31 @@ namespace _2DGame
                 yPos = newPosY;
                 keyPress = new ConsoleKeyInfo();
                 keyPress = Console.ReadKey(true);
-                PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY, out orientation);
+
+                if (keyPress.Key == ConsoleKey.W ||  keyPress.Key == ConsoleKey.S || keyPress.Key == ConsoleKey.A || keyPress.Key == ConsoleKey.D)
+                { PlayerMovement(mapBlockList, keyPress, xPos, yPos, out newPosX, out newPosY, out orientation, out isAbleBreak); }
+
+
             } while (keyPress.Key != ConsoleKey.Escape);
         }
 
 
-        private static void PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation)
+        private static void PlayerMovement(string[] mapBlockList, ConsoleKeyInfo keyPress, int xPos, int yPos, out int newPosX, out int newPosY, out char orientation, out bool isAbleBreak)
         {
             newPosX = xPos;
             newPosY = yPos;
             orientation = 'N';
+            isAbleBreak = false;
+
+            bool isAble;
 
             char[] charList = mapBlockList[yPos].ToCharArray();
             char block;
-            bool isAble;
+
             switch (keyPress.Key) {
                 case ConsoleKey.W:
                     orientation = 'N';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble, out isAbleBreak);
 
                     if (isAble)
                     {
@@ -119,7 +129,7 @@ namespace _2DGame
                     break;
                 case ConsoleKey.S:
                     orientation = 'S';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos, yPos, out isAble, out isAbleBreak);
 
                     if (isAble)
                     {
@@ -135,7 +145,7 @@ namespace _2DGame
                     break;
                 case ConsoleKey.A:
                     orientation = 'W';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos - 2, yPos, out isAble);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos - 2, yPos, out isAble, out isAbleBreak);
 
                     if (isAble)
                     {
@@ -151,7 +161,7 @@ namespace _2DGame
                     break;
                 case ConsoleKey.D:
                     orientation = 'E';
-                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos + 2, yPos, out isAble);
+                    CheckIfAbleToMove(orientation, mapBlockList, keyPress, xPos + 2, yPos, out isAble, out isAbleBreak);
 
                     if (isAble)
                     {
